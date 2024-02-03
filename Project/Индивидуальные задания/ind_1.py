@@ -1,14 +1,23 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-class Exp:
+"""
+Поле first — целое число, левая граница диапазона, включается в диапазон; поле second —
+целое число, правая граница диапазона, не включается в диапазон. Пара чисел
+представляет полуоткрытый интервал [first, second). Реализовать метод rangecheck() —
+проверку заданного целого числа на принадлежность диапазону.
+"""
 
-    def __init__(self, a=0, b=0):
-        a = float(a)
-        b = int(b)
+class Pair:
+    def __init__(self, first=0, second=0):
+        first = int(first)
+        second = int(second)
 
-        self.__first = a
-        self.__second = b
+        if first >= second:
+            raise ValueError("Значение 'first' должно быть меньше 'second'.")
+
+        self.__first = first
+        self.__second = second
 
     @property
     def first(self):
@@ -18,34 +27,40 @@ class Exp:
     def second(self):
         return self.__second
 
-    # Прочитать значение
     def read(self, prompt=None):
         line = input() if prompt is None else input(prompt)
-        parts = list(map(float, line.split(' ^ ', maxsplit=1)))
+        parts = list(map(int, line.split(', ', maxsplit=1)))
 
-        self.__first = float(parts[0])
-        self.__second = int(parts[1])
+        if parts[0] >= parts[1]:
+            raise ValueError("Первое значение должно быть меньше второго.")
 
-    # Вывести на экран
+        self.__first, self.__second = parts
+
     def display(self):
-        print(f"{self.__first} ^ {self.__second}")
+        print(f"[{self.__first}, {self.__second})")
 
-    # Возведение в степень
-    def power(self):
-        return self.__first ** self.__second
+    def rangecheck(self, value):
+        value = int(value)
+        return self.__first <= value < self.__second
 
 
-def make_exp(first, second):
+def make_pair(first, second):
     """
     Функция создания экземпляра класса Pair, принимая значения полей как аргументы
     """
-    return Exp(first, second)
+    return Pair(first, second)
 
 
 if __name__ == '__main__':
-    exm1 = Exp()
-    exm1.read("Введите степень: ")
-    exm1.display()
+    pair = make_pair(0, 10)  # Создание пары с начальными значениями
+    pair.display()  # Вывод созданной пары
 
-    exm2 = exm1.power()
-    print(exm2)
+    print("Введите два числа через запятую для создания интервала (например, '5, 10'): ")
+    pair.read("Введите интервал: ")
+    pair.display()  # Вывод введённой пары
+
+    value = int(input("Введите значение для проверки принадлежности к интервалу: "))
+    if pair.rangecheck(value):
+        print(f"Значение {value} находится в интервале.")
+    else:
+        print(f"Значение {value} находится вне интервала.")
